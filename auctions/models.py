@@ -17,7 +17,8 @@ class Listings(models.Model):
                                                                                  "to sell your product for? All "
                                                                                  "prices are in NGN!")
     image_url = models.CharField(max_length=1024, blank=True, help_text="Enter image URL")
-    category = models.CharField(max_length=64, blank=True, help_text="Enter category")
+    category = models.CharField(max_length=64, blank=True, help_text="Enter category e.g. "
+                                                                        "Fashion, Toys, Electronics, Home, etc.")
     watchlist_users = models.ManyToManyField(User, blank=True, related_name="watchlist_items")
     closed = models.BooleanField(default=False)
 
