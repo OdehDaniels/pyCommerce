@@ -2,6 +2,35 @@
 
 {% block body %}
     <h2>{{ title }}</h2>
-
-    TODO
+        <div class="container">
+            <div class="row align-items-start">
+                {% for listing in listings reversed %}
+                    <div class="col-md-4">
+                        <div class="card" style="width: 18rem;">
+                            <a href="{% url 'list' listing.pk %}">
+                                <img src="
+                                    {% if listing.image_url %} 
+                                        {{ listing.image_url }} 
+                                    {% else %}
+                                        https://sjkelectrical.com.my/img/default-image.jpg
+                                    {% endif %}" alt="list-image" class="card-img-top">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{% url 'list' listing.pk %}">{{ listing.title }}</a><span class="listing-owner"> &nbsp; by {{ listing.owner }}</span></h5>
+                                <p class="card-text">{{ listing.description }}</p>
+                                <p>Starting price: ${{ listing.starting_bid }}</p>
+                                <p class="">Current price: {{ listing.current_price }}</p>
+                                    <a href="{% url 'list' listing.pk %}" class="btn btn-primary">Bid</a>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <br/>
+                    <p>Nothing to see here for now :(</p>
+                {% endfor %}
+            </div>  
+        </div>
 {% endblock %}

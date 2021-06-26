@@ -68,7 +68,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-@login_required
+@login_required(login_url='/login')
 def createListing(request):
     if request.method == "POST":
         form = ListingForm(request.POST)
@@ -88,4 +88,29 @@ def createListing(request):
     return render(request, "auctions/create-listing.html", {
         "form": form
     })
+
+def list(request, list_id, bid_form=None):
+
+    listing = Listings.objects.get(pk=list_id)
+    print(listing.closed)
+    if request.user.is_authenticated:
+        is_watch_list = request.user.watchlist_items.filter(pk=list_id).exists()
+
+        # if bid form was passed to us already, we likely want to produce an error from create bid route.
+        if not bid_form:
+            bid_form = BidForm()
+
+        is_mine = listing.owner == request.user
+    else:
+        is_watch_list = None
+        bid_form = None
+        is_mine = None
+
+    return render(request, "auctions/listing.html", {
+        'listing': listing,
+        'is_watchlist': is_watch_list,
+        'form': bid_form,
+        'is_mine': is_mine
+    })
+
 

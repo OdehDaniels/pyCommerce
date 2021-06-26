@@ -9,7 +9,7 @@ class User(AbstractUser):
 
 # auction listings
 class Listings(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_id")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_listings", null=True)
     title = models.CharField(max_length=64, help_text="The title to be displayed for the listing")
     description = models.CharField(max_length=225, help_text="A description that lets users know more about "
                                                               "what you're selling!")
@@ -21,6 +21,8 @@ class Listings(models.Model):
                                                                         "Fashion, Toys, Electronics, Home, etc.")
     watchlist_users = models.ManyToManyField(User, blank=True, related_name="watchlist_items")
     closed = models.BooleanField(default=False)
+    created_at = models.DateField(null=True, blank=True)
+    updated_at = models.TimeField(null=True, blank=True)
 
     def current_price(self):
         return max([bid.value_offer for bid in self.bids.all()]+[self.starting_bid])
@@ -32,7 +34,7 @@ class Listings(models.Model):
         return self.bids.get(value_offer=self.current_price()).user if self.no_of_bids() > 0 else None
 
     def __str__(self):
-        return f'{self.title} by {self.user_id}: {self.description}'
+        return f'{self.title} by {self.owner}: {self.description}'
 
 # bids
 class Bids(models.Model):
@@ -40,6 +42,8 @@ class Bids(models.Model):
     value_offer = models.DecimalField(max_digits=8, decimal_places=2, help_text="How much are you willing to pay for "
                                                                                 "this item?")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids_made")
+    created_at = models.DateField(null=True, blank=True)
+    updated_at = models.TimeField(null=True, blank=True)
 
     def clean(self):
         print(self.value_offer)
@@ -57,6 +61,8 @@ class Comments(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     content = models.CharField(max_length=225)
     listing = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="comments")
+    created_at = models.DateField(null=True, blank=True)
+    updated_at = models.TimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.author} says {self.content} for listing: {self.listing}"
